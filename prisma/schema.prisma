@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model user {
+  id              Int              @id @default(autoincrement())
+  phone           String           @unique
+  name            String
+  date_of_birth   String
+  gender          String
+  password        String
+  city            String
+  Role            Role             @default(USER)
+  created_at      DateTime         @default(now())
+  updated_at      DateTime         @updatedAt
+  user_categories user_categories?
+  user_mood       user_mood?
+  token           token?
+}
+
+model user_categories {
+  user_id     Int     @unique
+  restaurants Boolean @default(false)
+  trade_fairs Boolean @default(false)
+  lectures    Boolean @default(false)
+  cafe        Boolean @default(false)
+  bars        Boolean @default(false)
+  sport       Boolean @default(false)
+  dancing     Boolean @default(false)
+  games       Boolean @default(false)
+  quests      Boolean @default(false)
+  concerts    Boolean @default(false)
+  parties     Boolean @default(false)
+  show        Boolean @default(false)
+  for_free    Boolean @default(false)
+  cinema      Boolean @default(false)
+  theaters    Boolean @default(false)
+  user        user    @relation(fields: [user_id], references: [id])
+}
+
+model user_mood {
+  user_id     Int     @unique
+  funny       Boolean @default(false)
+  sad         Boolean @default(false)
+  gambling    Boolean @default(false)
+  romantic    Boolean @default(false)
+  energetic   Boolean @default(false)
+  festive     Boolean @default(false)
+  calm        Boolean @default(false)
+  friendly    Boolean @default(false)
+  cognitive   Boolean @default(false)
+  dreamy      Boolean @default(false)
+  do_not_know Boolean @default(false)
+  user        user    @relation(fields: [user_id], references: [id])
+}
+
+model token {
+  user_id       Int    @unique
+  refresh_token String @unique
+  user          user   @relation(fields: [user_id], references: [id])
+}
+
+enum Role {
+  USER
+  ADMIN
+}
