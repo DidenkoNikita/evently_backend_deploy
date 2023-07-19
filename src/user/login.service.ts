@@ -9,7 +9,7 @@ import { User } from "./login.controller";
 export class LoginService {
   constructor(private prisma: PrismaClient) {};
 
-  async signin(userLoginDto: UserLoginDto): Promise<User | never> {
+  async signin(userLoginDto: UserLoginDto) {
     const user = await this.prisma.user.findUnique({
       where: {
         phone: userLoginDto.phone
@@ -34,6 +34,7 @@ export class LoginService {
         }
       })
       const id = user.id
+
       return {id, accessToken};
     } else {
       throw new Error();

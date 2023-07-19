@@ -1,0 +1,149 @@
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "src/prisma.service";
+import { UserId } from "./user.controller";
+// import { UserId } from "./user.controller";
+
+@Injectable() 
+export class UserService {
+  constructor(private prisma: PrismaService) {}
+
+  async getUser (userId: UserId) {
+    const id = userId.user_id
+    
+    const userData = await this.prisma.user.findUnique({
+      where: {
+        id: id
+      },
+      select: {
+        phone: true,
+        name: true,
+        date_of_birth: true,
+        gender: true,
+        city: true,
+        link_avatar: true
+      }
+    })
+
+    const userCategories = await this.prisma.user_categories.findUnique({
+      where: {
+        user_id: id
+      },
+      select: {
+        restaurants: true,
+        trade_fairs: true,
+        lectures: true,
+        cafe: true,
+        bars: true,
+        sport: true,
+        dancing: true,
+        games: true,
+        quests: true,
+        concerts: true,
+        parties: true,
+        show: true,
+        for_free: true,
+        cinema: true,
+        theaters: true
+      }
+    })
+
+    const userMood = await this.prisma.user_mood.findUnique({
+      where: {
+        user_id: id
+      },
+      select: {
+        funny: true,
+        sad: true,
+        gambling: true,
+        romantic: true,
+        energetic: true,
+        festive: true,
+        calm: true,
+        friendly: true,
+        cognitive: true,
+        dreamy: true,
+        do_not_know: true          
+      }
+    })
+
+    console.log('fuck',userData, userCategories, userMood);
+    
+
+    return {
+      user: userData,
+      userCategories,
+      userMood
+    };
+  }
+
+  async updateCity (userCity) {
+    const id = userCity.user_id
+    
+    const userData = await this.prisma.user.update({
+      where: {
+        id: id
+      },
+      data: {
+        city: userCity.city
+      },
+      select: {
+        phone: true,
+        name: true,
+        date_of_birth: true,
+        gender: true,
+        city: true
+      }
+    })
+
+    const userCategories = await this.prisma.user_categories.findUnique({
+      where: {
+        user_id: id
+      },
+      select: {
+        restaurants: true,
+        trade_fairs: true,
+        lectures: true,
+        cafe: true,
+        bars: true,
+        sport: true,
+        dancing: true,
+        games: true,
+        quests: true,
+        concerts: true,
+        parties: true,
+        show: true,
+        for_free: true,
+        cinema: true,
+        theaters: true
+      }
+    })
+
+    const userMood = await this.prisma.user_mood.findUnique({
+      where: {
+        user_id: id
+      },
+      select: {
+        funny: true,
+        sad: true,
+        gambling: true,
+        romantic: true,
+        energetic: true,
+        festive: true,
+        calm: true,
+        friendly: true,
+        cognitive: true,
+        dreamy: true,
+        do_not_know: true          
+      }
+    })
+
+    console.log('fuck',userData, userCategories, userMood);
+    
+
+    return {
+      user: userData,
+      userCategories,
+      userMood
+    };
+  }
+}

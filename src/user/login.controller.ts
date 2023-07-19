@@ -12,9 +12,12 @@ export class LoginController {
   constructor(private readonly loginService: LoginService) {};
 
   @Post()
-  login(@Body() userLoginDto: UserLoginDto): Promise<User> {
+  login(@Body() userLoginDto) {
     try {
-      return this.loginService.signin(userLoginDto)
+      const user = userLoginDto.user
+      console.log(user);
+      
+      return this.loginService.signin(user)
     } catch(e) {
       console.log(e);
     }

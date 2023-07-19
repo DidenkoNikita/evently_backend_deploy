@@ -18,6 +18,7 @@ model user {
   Role            Role             @default(USER)
   created_at      DateTime         @default(now())
   updated_at      DateTime         @updatedAt
+  link_avatar     String?
   user_categories user_categories?
   user_mood       user_mood?
   token           token?
@@ -63,6 +64,32 @@ model token {
   user_id       Int    @unique
   refresh_token String @unique
   user          user   @relation(fields: [user_id], references: [id])
+}
+
+model story {
+  id            Int    @id @default(autoincrement())
+  title         String
+  link          String
+} 
+
+model post {
+  id           Int     @id @default(autoincrement())
+  link_photo   String
+  link_avatar  String
+  user_name    String
+  title        String
+  like         Int[]
+}
+
+model comment {
+  id           Int     @id @default(autoincrement())
+  user_id      Int
+  post_id      Int
+  created_at   DateTime         @default(now())
+  text         String
+  like         Int[]       
+  link_avatar  String?
+  user_name    String 
 }
 
 enum Role {

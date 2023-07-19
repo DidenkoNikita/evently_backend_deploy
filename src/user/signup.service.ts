@@ -3,45 +3,48 @@ import { PrismaService } from "src/prisma.service";
 import { generateAccessToken, generateRefreshToken } from "src/service/generate-token";
 import { passwordHashing } from "src/service/password-hashing";
 import { UserDto } from "./dto/user.dto";
-import { User } from "./login.controller";
+import { User } from "./signup.controller";
 
 @Injectable()
 export class SignupService {
   constructor(private prisma: PrismaService) {};
 
-  async createUser(userDto: UserDto): Promise<User> {
-    const passwordHash = await passwordHashing(userDto.user.password);
-    console.log(passwordHash);
-    userDto.user.password = passwordHash;
-    const user = await this.prisma.user.create({
+  async createUser(user) {
+    const passwordHash = await passwordHashing(user.user.password);
+    user.user.password = passwordHash;
+    const dataUser = user.user
+    console.log(dataUser);
+    
+    const userData = await this.prisma.user.create({
       data: {
-        ...userDto.user
+        ...dataUser
       }
     })
     const userCategories = await this.prisma.user_categories.create({
       data: {
-        user_id: user.id,
-        ...userDto.userCategories
+        user_id: userData.id,
+        ...user.user_categories
       }
     })
     const userMood = await this.prisma.user_mood.create({
       data: {
-        user_id: user.id,
-        ...userDto.userMood
+        user_id: userData.id,
+        ...user.user_mood
       }
     })
 
-    const accessToken = generateAccessToken({ name: userDto.user.name });
+    const accessToken = generateAccessToken({ name: user.user.name });
     const refreshToken = generateRefreshToken({ id: user.id });
     console.log(accessToken, refreshToken);
 
     await this.prisma.token.create({
       data: {
-        user_id: user.id,
+        user_id: userData.id,
         refresh_token: refreshToken
       }
     })
-    const id = user.id
+    const id = userData.id;
+    
     return {id, accessToken};
   }
 }
