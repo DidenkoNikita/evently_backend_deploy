@@ -9,10 +9,12 @@ import { CommentsModule } from './comments/comments.module';
 import { UserCategoriesModule } from './user/userCategories/userCategories.module';
 import { UserMoodModule } from './user/userMood/userMood.module';
 import { UploadAvatarModule } from './user/uploadAvatar/uploadAvatar.module';
+import { SearchService } from './service/search';
+import { TokenValidationService } from './service/validate-token';
 
 @Module({
   imports: [UserModule, StoriesModule, PostsModule, CommentsModule, UserCategoriesModule, UserMoodModule, UploadAvatarModule],
   controllers: [AppController],
-  providers: [AppService, PrismaService],
+  providers: [AppService, PrismaService, SearchService, TokenValidationService],
 })
 export class AppModule {};

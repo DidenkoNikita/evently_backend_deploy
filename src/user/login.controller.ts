@@ -7,19 +7,27 @@ export interface User {
   accessToken: string
 }
 
-@Controller('login')
+@Controller()
 export class LoginController {
   constructor(private readonly loginService: LoginService) {};
 
-  @Post()
+  @Post('login')
   login(@Body() userLoginDto) {
     try {
-      const user = userLoginDto.user
-      console.log(user);
-      
+      const user = userLoginDto.user      
       return this.loginService.signin(user)
     } catch(e) {
-      console.log(e);
+      return console.log(e);
+    }
+  }
+
+  @Post('login_remember_me')
+  loginWithRememberMe(@Body() userLoginDto) {
+    try {
+      const user = userLoginDto.user      
+      return this.loginService.signinWithRememberMe(user)
+    } catch(e) {
+      return console.log(e);
     }
   }
 }

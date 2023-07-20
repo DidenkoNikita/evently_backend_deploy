@@ -8,9 +8,28 @@ export class CommentsService {
 
   async getComments() {
     const comments = await this.prisma.comment.findMany();
-    console.log(comments);
     
-    return comments;
+    const updatedComments = await Promise.all(comments.map(async (comment: any) => {
+      console.log(comment.user_id);
+      
+      const user = await this.prisma.user.findUnique({
+        where: {
+          id: comment.user_id
+        },
+        select: {
+          link_avatar: true,
+          name: true
+        }
+      });
+      console.log(user);
+      
+      comment.link_avatar = user.link_avatar;
+      comment.user_name = user.name;
+      return comment;
+    }));
+    console.log(updatedComments);
+    
+    return updatedComments;
   }
 
   async createComment(commentDto: CommentDto) {
@@ -29,12 +48,10 @@ export class CommentsService {
         user_id: commentDto.user_id,
         post_id: commentDto.post_id,
         text: commentDto.text,
-        link_avatar: user.link_avatar,
-        user_name: user.name
       }
     })
     
-    return comment;
+    return {...user, ...comment};
   }
 
   async likeComment(commentDto: LikeCommentDto) {

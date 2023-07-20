@@ -10,7 +10,8 @@ export class UserCategoriesController {
   async updateUserCategories(@Body() userCategories, @Res() res: Response) {
     try {
       const user = await this.userCategoriesService.updateUserCategories(userCategories);
-      res.status(200).json({user});
+     
+      res.status(200).json(user);
     } catch(e) {
       return console.log(e);
     }

@@ -44,17 +44,27 @@ export interface User {
   }
 }
 
-@Controller('/signup')
+@Controller()
 export class SignupController {
   constructor(private readonly signupService: SignupService) {};
 
-  @Post()
+  @Post('/signup')
   createUser(@Body() userDto) {
     try {
-      const user = userDto.obj
+      const user = userDto.user
       return this.signupService.createUser(user);
     } catch(e) {
-     console.log(e);
+     return console.log(e);
+    }
+  }
+
+  @Post('/signup_remember_me')
+  createUserWithRememberMe(@Body() userDto) {
+    try {
+      const user = userDto.user
+      return this.signupService.createUserWithRememberMe(user);
+    } catch(e) {
+     return console.log(e);
     }
   }
 

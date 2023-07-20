@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma.service";
 import { UserId } from "./user.controller";
-// import { UserId } from "./user.controller";
 
 @Injectable() 
 export class UserService {
@@ -15,6 +14,7 @@ export class UserService {
         id: id
       },
       select: {
+        id: true,
         phone: true,
         name: true,
         date_of_birth: true,
@@ -64,10 +64,7 @@ export class UserService {
         dreamy: true,
         do_not_know: true          
       }
-    })
-
-    console.log('fuck',userData, userCategories, userMood);
-    
+    })    
 
     return {
       user: userData,
@@ -87,63 +84,10 @@ export class UserService {
         city: userCity.city
       },
       select: {
-        phone: true,
-        name: true,
-        date_of_birth: true,
-        gender: true,
         city: true
       }
     })
 
-    const userCategories = await this.prisma.user_categories.findUnique({
-      where: {
-        user_id: id
-      },
-      select: {
-        restaurants: true,
-        trade_fairs: true,
-        lectures: true,
-        cafe: true,
-        bars: true,
-        sport: true,
-        dancing: true,
-        games: true,
-        quests: true,
-        concerts: true,
-        parties: true,
-        show: true,
-        for_free: true,
-        cinema: true,
-        theaters: true
-      }
-    })
-
-    const userMood = await this.prisma.user_mood.findUnique({
-      where: {
-        user_id: id
-      },
-      select: {
-        funny: true,
-        sad: true,
-        gambling: true,
-        romantic: true,
-        energetic: true,
-        festive: true,
-        calm: true,
-        friendly: true,
-        cognitive: true,
-        dreamy: true,
-        do_not_know: true          
-      }
-    })
-
-    console.log('fuck',userData, userCategories, userMood);
-    
-
-    return {
-      user: userData,
-      userCategories,
-      userMood
-    };
+    return {userData};
   }
 }

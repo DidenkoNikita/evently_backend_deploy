@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
+import { generateAccessToken, generateRefreshToken } from './service/generate-token';
 
 // const stories = [
 //   {
@@ -65,22 +66,46 @@ export class AppService {
     return arr
   }
 
-  async checkNumber(number) {
-    console.log(`+${number}`);
-    
+  async checkNumber(number) {    
     const numb = await this.prisma.user.findUnique({
       where: {
         phone: `+${number}`
       }
-    })
-
-    console.log(numb);
-    
+    })    
 
     if (numb) {
       return true;
     } else {
       return false;
+    }
+  }
+
+  async signin(id) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: id.user_id
+      }
+    })
+    if (user) {
+      const refreshToken = generateRefreshToken({id: user.id});
+      const accessToken = generateAccessToken({name: user.name})
+      await this.prisma.token.upsert({
+        where: {
+          user_id: user.id
+        },
+        update: {
+          refresh_token: refreshToken
+        },
+        create: {
+          user_id: user.id,
+          refresh_token: refreshToken
+        }
+      })
+      const id = user.id
+
+      return {id, accessToken};
+    } else {
+      throw new Error();
     }
   }
 }

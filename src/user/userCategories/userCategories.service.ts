@@ -6,28 +6,8 @@ export class UserCategoriesService {
   constructor(private prisma: PrismaService) {}
 
   async updateUserCategories (userCategoriesDto) {
-    const id = userCategoriesDto.user_id
+    const id = userCategoriesDto.user_id;
     
-    const userData = await this.prisma.user.findUnique({
-      where: {
-        id: id
-      },
-      select: {
-        phone: true,
-        name: true,
-        date_of_birth: true,
-        gender: true,
-        city: true,
-        link_avatar: true
-      }
-    })
-
-    console.log(userCategoriesDto.userCategories);
-
-    console.log(id);
-    
-    
-
     const userCategories = await this.prisma.user_categories.update({
       where: {
         user_id: id
@@ -68,32 +48,6 @@ export class UserCategoriesService {
       }
     })
 
-    const userMood = await this.prisma.user_mood.findUnique({
-      where: {
-        user_id: id
-      },
-      select: {
-        funny: true,
-        sad: true,
-        gambling: true,
-        romantic: true,
-        energetic: true,
-        festive: true,
-        calm: true,
-        friendly: true,
-        cognitive: true,
-        dreamy: true,
-        do_not_know: true          
-      }
-    })
-
-    console.log('fuck',userData, userCategories, userMood);
-    
-
-    return {
-      user: userData,
-      userCategories,
-      userMood
-    };
+    return {userCategories};
   }
 }

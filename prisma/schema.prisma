@@ -87,9 +87,7 @@ model comment {
   post_id      Int
   created_at   DateTime         @default(now())
   text         String
-  like         Int[]       
-  link_avatar  String?
-  user_name    String 
+  like         Int[] 
 }
 
 enum Role {

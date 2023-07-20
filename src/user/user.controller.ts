@@ -14,9 +14,8 @@ export class UserController {
   async getUser(@Body() userId: UserId, @Res() res: Response) {
     try {
       const user = await this.userService.getUser(userId)
-      console.log('user::', user);
       
-      res.status(200).json({user});
+      res.status(200).json(user);
     } catch(e) {
       return console.log(e);
     }
@@ -26,7 +25,7 @@ export class UserController {
   async updateCity(@Body() userCity, @Res() res: Response) {
     try {
       const user = await this.userService.updateCity(userCity)
-      res.status(200).json({user});
+      res.status(200).json(user);
     } catch(e) {
       return console.log(e);
     }

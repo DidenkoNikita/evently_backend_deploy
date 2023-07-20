@@ -10,7 +10,7 @@ export class UserMoodController {
   async updateUserMood(@Body() userMood, @Res() res: Response ) {
     try {
       const user = await this.userMoodService.updateUserMood(userMood);
-      res.status(200).json({user})
+      res.status(200).json(user)
     } catch(e) {
       return console.log(e);
     }

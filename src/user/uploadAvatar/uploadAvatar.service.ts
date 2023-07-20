@@ -36,7 +36,7 @@ export class UploadService {
           link_avatar: fileUrl
         },
       })
-      return {link_avatar: fileUrl, id: Number(id)};
+      return {link_avatar: fileUrl};
     } catch (error) {
       console.error('Ошибка при загрузке файла в Yandex Cloud', error);
       throw error;
