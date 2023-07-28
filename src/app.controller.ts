@@ -21,22 +21,15 @@ export class AppController {
 
   @Post('/check_remember_me')
   async checkRememberMe(@Body() id, @Req() req: Request, @Res() res: Response) {
-    const authorizationHeader = req.headers.authorization;
-    console.log(authorizationHeader);
-    
+    const authorizationHeader = req.headers.authorization;   
     
     if (authorizationHeader) {
-      const token = authorizationHeader.split(' ')[1];
-      console.log(token);
+      const token = authorizationHeader.split(' ')[1];      
       
-      
-      const validate = this.validateToken.validateRefreshToken(token);
-      console.log(validate);
-      
+      const validate = this.validateToken.validateRefreshToken(token);      
       
       if (validate) {        
         const user = await this.appService.signin(id);
-        console.log(user);
         
         res.status(200).json(user);
       } else {

@@ -73,6 +73,19 @@ export class UserService {
     };
   }
 
+  async getUserList (userId: UserId) {
+    const users = await this.prisma.user.findMany({
+      select: {
+        id: true,
+        name: true,
+        link_avatar: true,
+        phone: true
+      }
+    });
+    const userList = users.filter((user) => user.id !== userId.user_id)
+    return userList
+  }
+
   async updateCity (userCity) {
     const id = userCity.user_id
     

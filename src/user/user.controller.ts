@@ -6,11 +6,11 @@ export interface UserId {
   user_id: number
 }
 
-@Controller('/user')
+@Controller()
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post()
+  @Post('/user')
   async getUser(@Body() userId: UserId, @Res() res: Response) {
     try {
       const user = await this.userService.getUser(userId)
@@ -21,7 +21,17 @@ export class UserController {
     }
   }
 
-  @Put()
+  @Post('/user_list')
+  async getUserList(@Body() userId: UserId, @Res() res: Response) {
+    try {
+      const users = await this.userService.getUserList(userId);
+      res.status(200).json(users)
+    } catch(e) {
+      return console.log(e);
+    }
+  }
+
+  @Put('/user')
   async updateCity(@Body() userCity, @Res() res: Response) {
     try {
       const user = await this.userService.updateCity(userCity)

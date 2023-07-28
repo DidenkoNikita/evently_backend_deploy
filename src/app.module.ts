@@ -11,9 +11,10 @@ import { UserMoodModule } from './user/userMood/userMood.module';
 import { UploadAvatarModule } from './user/uploadAvatar/uploadAvatar.module';
 import { SearchService } from './service/search';
 import { TokenValidationService } from './service/validate-token';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
-  imports: [UserModule, StoriesModule, PostsModule, CommentsModule, UserCategoriesModule, UserMoodModule, UploadAvatarModule],
+  imports: [UserModule, StoriesModule, PostsModule, CommentsModule, UserCategoriesModule, UserMoodModule, UploadAvatarModule, ChatModule],
   controllers: [AppController],
   providers: [AppService, PrismaService, SearchService, TokenValidationService],
 })

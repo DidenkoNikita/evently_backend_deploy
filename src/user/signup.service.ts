@@ -70,9 +70,7 @@ export class SignupService {
     })
 
     const accessToken = generateAccessToken({ name: user.user.name });
-    const refreshToken = generateRefreshToken({ id: user.id });
-    console.log(refreshToken);
-    
+    const refreshToken = generateRefreshToken({ id: user.id });    
 
     await this.prisma.token.create({
       data: {

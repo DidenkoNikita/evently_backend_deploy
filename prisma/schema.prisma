@@ -90,6 +90,20 @@ model comment {
   like         Int[] 
 }
 
+model chat {
+  id           Int     @id @default(autoincrement())
+  users_id     Int[]   
+}
+
+model message {
+  id           Int     @id @default(autoincrement())
+  user_id      Int
+  created_at   DateTime          @default(now())
+  text         String
+  is_read      Boolean           @default(false)
+  chat_id      Int
+}
+
 enum Role {
   USER
   ADMIN

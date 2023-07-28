@@ -10,7 +10,6 @@ export class CommentsService {
     const comments = await this.prisma.comment.findMany();
     
     const updatedComments = await Promise.all(comments.map(async (comment: any) => {
-      console.log(comment.user_id);
       
       const user = await this.prisma.user.findUnique({
         where: {
@@ -21,13 +20,11 @@ export class CommentsService {
           name: true
         }
       });
-      console.log(user);
       
       comment.link_avatar = user.link_avatar;
       comment.user_name = user.name;
       return comment;
     }));
-    console.log(updatedComments);
     
     return updatedComments;
   }
