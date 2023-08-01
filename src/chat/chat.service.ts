@@ -1,14 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
-import { ChatDto, MessageData, UserData } from './chat.controller';
+import { ChatDto, DeleteChat, MessageData, UpdateMessage, UserData } from './chat.controller';
+import { time } from 'console';
 
 @Injectable()
 export class ChatService {
   constructor(private prisma: PrismaService) {}
 
-  async getChats (userId) {
-    console.log('userId', userId);
-    
+  async getChats (userId) {    
     const chats = await this.prisma.chat.findMany({
       where: {
         users_id: {
@@ -27,16 +26,17 @@ export class ChatService {
             name: true,
             link_avatar: true
           }
-        })
+        })        
 
         const messages = await this.prisma.message.findMany({
           where: {
             chat_id: chat.id
           }
         })
-        console.log('messages', messages.at(-1));
-        const message =  messages.at(-1);
-
+        const [message] =  messages.sort((a, b) => a.id - b.id).slice(-1);
+        const filterMessage = messages.filter((message) => message.user_id !== userId && !message.is_read);
+        console.log(filterMessage);
+        
         chat.name = userData.name;
         chat.link_avatar = userData.link_avatar;
         if (message) {
@@ -47,15 +47,13 @@ export class ChatService {
           chat.timeMessage = `${formatNumber(time.getHours())}:${formatNumber(time.getMinutes())}`;
           chat.textMessage = message.text.length >= 20 ? message.text.slice(0, 20) + '...' : message.text
           chat.isReadMessage = message.is_read;
-          chat.userId = message.user_id
+          chat.userId = message.user_id;
+          chat.unreadMessages = filterMessage.length;
         }
         return chat
       }))
-      console.log('update chats',updateChats);
       return updateChats;
-    } else {
-      console.log('chats', chats);
-      
+    } else {      
       return chats;
     }
   }
@@ -105,7 +103,7 @@ export class ChatService {
         chat_id: chatId
       }
     })
-
+    
     return messages;
   }
 
@@ -118,20 +116,43 @@ export class ChatService {
       }
     })
 
+    console.log('create message', message);
+    
     return message;
   }
 
-  async markMessageAsRead(chatId: number, userId: number) {
-    await this.prisma.message.updateMany({
+  async markMessageAsRead(message: UpdateMessage) {
+    return await this.prisma.message.update({
       where: {
-        chat_id: chatId,
-        user_id: {
-          not: userId
-        }
+        id: message.id
       },
       data: {
         is_read: true
       }
     });
+  }
+
+  async deleteChat(chatId: DeleteChat) {
+    const chat = await this.prisma.chat.delete({
+      where : {
+        id: chatId.id
+      }
+    })
+
+    const messages = await this.prisma.message.findMany({
+      where: {
+        chat_id: chatId.id
+      }
+    })
+
+    if (messages) {
+      await this.prisma.message.deleteMany({
+        where: {
+          chat_id: chatId.id
+        }
+      })
+    }
+
+    return chat
   }
 }

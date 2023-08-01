@@ -12,6 +12,8 @@ export class UploadAvatarController {
   async uploadAvatar(@UploadedFile() file, @Param('id') id: number, @Res() res: Response) {
     try {
       const fileUrl = await this.uploadService.uploadFile(file, id);
+      console.log('фото обновлено', fileUrl);
+      
       res.status(200).json(fileUrl)
       return { fileUrl };
     } catch (error) {

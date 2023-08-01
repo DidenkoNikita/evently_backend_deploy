@@ -33,11 +33,9 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   @SubscribeMessage('getChats')
   async getChats(client: Socket, userId: string) {
-    console.log('id', userId);
-
     this.userSockets[userId] = client;
     const chatData = await this.chatService.getChats(userId);
-    const isConnected = !!this.userSockets[userId]; // Проверяем, подключен ли клиент к сокету
+    const isConnected = !!this.userSockets[userId];
     client.emit('chatData', chatData);
     client.emit('userStatus', isConnected);
   }
@@ -62,10 +60,18 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   async createMessage(client: Socket, messageData: MessageData) {
     const message = await this.chatService.createMessage(messageData);    
     this.sendMessageToUser(messageData.user2Id.toString(), message);
-    this.server.emit('createMessage', message);
+    const userSocket = this.userSockets[messageData.user2Id];
+    
+    if (userSocket) {
+      // const messageUpdate =  await this.chatService.markMessageAsRead(message);
+      this.server.emit('createMessage', message);
+      return message
+    } else {
+      this.server.emit('createMessage', message);
+      return message;
+    }
 
-    this.chatService.markMessageAsRead(messageData.chatId, messageData.user2Id);
-    return message;
+
   }
 
   sendChatData(chatData) {
@@ -79,24 +85,43 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     }
   }
 
+  sendUpdateChatToUser(userId: string, chatData) {
+    const userSocket = this.userSockets[userId];
+
+    console.log(!!userSocket);
+    
+    if (userSocket) {
+      console.log('chat data syke',chatData, userId);
+      
+      userSocket.emit('updateChat', chatData);
+    }
+  }
+
   sendMessage(messageData) {
     this.server.emit('getMessageList', messageData);
   }
 
-  sendMessageToUser(userId: string, messageData) {
+  async sendMessageToUser(userId: string, messageData) {
     const userSocket = this.userSockets[userId];
-    console.log('sendMessageToUser', messageData);
     if (userSocket) {
       userSocket.emit('createMessage', messageData);
+    }
+  }
+
+  sendUpdateMessageToUser(userId: string, messageData) {
+    const userSocket = this.userSockets[userId];
+    
+    if (userSocket) {
+      userSocket.emit('messageIsRead', messageData);
     }
   }
 
   @SubscribeMessage('getMessageList')
   async getMessageList(client: Socket, chatId: number) {
     try {
-      const messages = await this.chatService.getMessagesForChat(chatId);
-      console.log(messages);
+      console.log('chat id',chatId);      
       
+      const messages = await this.chatService.getMessagesForChat(chatId);      
       client.emit('messageList', messages);
     } catch (error) {
       console.error('Ошибка при получении списка сообщений:', error);
