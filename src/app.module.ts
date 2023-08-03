@@ -12,9 +12,10 @@ import { UploadAvatarModule } from './user/uploadAvatar/uploadAvatar.module';
 import { SearchService } from './service/search';
 import { TokenValidationService } from './service/validate-token';
 import { ChatModule } from './chat/chat.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
-  imports: [UserModule, StoriesModule, PostsModule, CommentsModule, UserCategoriesModule, UserMoodModule, UploadAvatarModule, ChatModule],
+  imports: [UserModule, StoriesModule, PostsModule, CommentsModule, UserCategoriesModule, UserMoodModule, UploadAvatarModule, ChatModule, NotificationModule],
   controllers: [AppController],
   providers: [AppService, PrismaService, SearchService, TokenValidationService],
 })

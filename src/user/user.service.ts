@@ -20,7 +20,8 @@ export class UserService {
         date_of_birth: true,
         gender: true,
         city: true,
-        link_avatar: true
+        link_avatar: true,
+        friends_id: true
       }
     })
 
@@ -82,7 +83,8 @@ export class UserService {
         phone: true,
         city: true,
         date_of_birth: true,
-        gender: true
+        gender: true,
+        friends_id: true
       }
     });
 

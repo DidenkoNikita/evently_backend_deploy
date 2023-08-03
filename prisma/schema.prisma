@@ -19,6 +19,7 @@ model user {
   created_at      DateTime         @default(now())
   updated_at      DateTime         @updatedAt
   link_avatar     String?
+  friends_id      Int[]
   user_categories user_categories?
   user_mood       user_mood?
   token           token?
@@ -93,6 +94,7 @@ model comment {
 model chat {
   id           Int     @id @default(autoincrement())
   users_id     Int[]   
+  updated_at      DateTime         @updatedAt
 }
 
 model message {
@@ -102,6 +104,12 @@ model message {
   text         String
   is_read      Boolean           @default(false)
   chat_id      Int
+}
+
+model request_for_friendship {
+  id           Int     @id @default(autoincrement())
+  creator_id   Int
+  user_id      Int
 }
 
 enum Role {
