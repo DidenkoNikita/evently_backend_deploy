@@ -114,6 +114,9 @@ model message {
   text       String
   is_read    Boolean  @default(false)
   chat_id    Int
+  post_id    Int?
+  post_name  String?
+  link_photo String?
 }
 
 model request_for_friendship {

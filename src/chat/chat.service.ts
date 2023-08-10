@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { ChatDto, Data, DeleteChat, MessageData, UpdateMessage, UserData } from './chat.controller';
-import { time } from 'console';
 
 @Injectable()
 export class ChatService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
-  async getChats (userId) {    
+  async getChats(userId) {
     const chats = await this.prisma.chat.findMany({
       where: {
         users_id: {
@@ -26,17 +25,17 @@ export class ChatService {
             name: true,
             link_avatar: true
           }
-        })        
+        })
 
         const messages = await this.prisma.message.findMany({
           where: {
             chat_id: chat.id
           }
         })
-        const [message] =  messages.sort((a, b) => a.id - b.id).slice(-1);
+        const [message] = messages.sort((a, b) => a.id - b.id).slice(-1);
         const filterMessage = messages.filter((message) => message.user_id !== userId && !message.is_read);
         console.log(filterMessage);
-        
+
         chat.name = userData.name;
         chat.link_avatar = userData.link_avatar;
         if (message) {
@@ -54,12 +53,12 @@ export class ChatService {
         return chat
       }))
       return updateChats;
-    } else {      
+    } else {
       return chats;
     }
   }
 
-  async createChat (chatData: ChatDto) {
+  async createChat(chatData: ChatDto) {
     const chat = await this.prisma.chat.create({
       data: {
         users_id: [chatData.user1Id, chatData.user2Id]
@@ -84,7 +83,7 @@ export class ChatService {
     return updateChat;
   }
 
-  async getChatId (userData: UserData) {
+  async getChatId(userData: UserData) {
     const chatId = await this.prisma.chat.findFirst({
       where: {
         users_id: {
@@ -104,22 +103,38 @@ export class ChatService {
         chat_id: chatId
       }
     })
-    
+
     return messages;
   }
 
   async createMessage(messageData: MessageData) {
-    const message = await this.prisma.message.create({
-      data: {
-        user_id: messageData.user_id,
-        text: messageData.text,
-        chat_id: messageData.chatId
-      }
-    })
+    if (messageData.stateData) {
+      const message = await this.prisma.message.create({
+        data: {
+          user_id: messageData.user_id,
+          text: messageData.stateData.text,
+          chat_id: messageData.chatId,
+          post_name: messageData.stateData.post_name,
+          link_photo: messageData.stateData.link_photo,
+          post_id: messageData.stateData.post_id
+        }
+      })
+      console.log('create message', message);
 
-    console.log('create message', message);
-    
-    return message;
+      return message;
+    } else {
+      const message = await this.prisma.message.create({
+        data: {
+          user_id: messageData.user_id,
+          text: messageData.text,
+          chat_id: messageData.chatId
+        }
+      })
+      console.log('create message', message);
+
+      return message;
+    }
+
   }
 
   async markMessageAsRead(message: UpdateMessage) {
@@ -135,7 +150,7 @@ export class ChatService {
 
   async deleteChat(chatId: DeleteChat) {
     const chat = await this.prisma.chat.delete({
-      where : {
+      where: {
         id: chatId.id
       }
     })
