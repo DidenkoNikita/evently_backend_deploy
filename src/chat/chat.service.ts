@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
-import { ChatDto, DeleteChat, MessageData, UpdateMessage, UserData } from './chat.controller';
+import { ChatDto, Data, DeleteChat, MessageData, UpdateMessage, UserData } from './chat.controller';
 import { time } from 'console';
 
 @Injectable()
@@ -41,10 +41,11 @@ export class ChatService {
         chat.link_avatar = userData.link_avatar;
         if (message) {
           const time = new Date(message.created_at);
-          const formatNumber = (num: number) => {
-            return num.toString().padStart(2, '0');
-          };
-          chat.timeMessage = `${formatNumber(time.getHours())}:${formatNumber(time.getMinutes())}`;
+          // const formatNumber = (num: number) => {
+          //   return num.toString().padStart(2, '0');
+          // };
+          // chat.timeMessage = `${formatNumber(time.getHours())}:${formatNumber(time.getMinutes())}`;
+          chat.timeMessage = time
           chat.textMessage = message.text.length >= 20 ? message.text.slice(0, 20) + '...' : message.text
           chat.isReadMessage = message.is_read;
           chat.userId = message.user_id;

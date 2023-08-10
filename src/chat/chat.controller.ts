@@ -31,6 +31,11 @@ export interface DeleteChat {
   user_id: number;
 }
 
+export interface Data {
+  user_id: number;
+  brand_id: number;
+}
+
 @Controller()
 export class ChatController {
   constructor(

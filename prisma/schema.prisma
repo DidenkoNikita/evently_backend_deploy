@@ -8,21 +8,18 @@ datasource db {
 }
 
 model user {
-  id              Int              @id @default(autoincrement())
-  phone           String           @unique
-  name            String
-  date_of_birth   String
-  gender          String
-  password        String
-  city            String
-  Role            Role             @default(USER)
-  created_at      DateTime         @default(now())
-  updated_at      DateTime         @updatedAt
-  link_avatar     String?
-  friends_id      Int[]
-  user_categories user_categories?
-  user_mood       user_mood?
-  token           token?
+  id                      Int                      @id @default(autoincrement())
+  phone                   String                   @unique
+  name                    String
+  date_of_birth           String
+  gender                  String
+  password                String
+  city                    String
+  Role                    Role                     @default(USER)
+  created_at              DateTime                 @default(now())
+  updated_at              DateTime                 @updatedAt
+  link_avatar             String?
+  friends_id              Int[]
 }
 
 model user_categories {
@@ -42,7 +39,6 @@ model user_categories {
   for_free    Boolean @default(false)
   cinema      Boolean @default(false)
   theaters    Boolean @default(false)
-  user        user    @relation(fields: [user_id], references: [id])
 }
 
 model user_mood {
@@ -58,58 +54,111 @@ model user_mood {
   cognitive   Boolean @default(false)
   dreamy      Boolean @default(false)
   do_not_know Boolean @default(false)
-  user        user    @relation(fields: [user_id], references: [id])
 }
 
 model token {
   user_id       Int    @unique
   refresh_token String @unique
-  user          user   @relation(fields: [user_id], references: [id])
+}
+
+model phone_confidentiality {
+  user_id       Int       @unique
+  all           Boolean   @default(true)
+  my_friends    Boolean   @default(false)
+  nobody        Boolean   @default(false)
+}
+
+model message_confidentiality {
+  user_id       Int       @unique
+  all           Boolean   @default(true)
+  my_friends    Boolean   @default(false)
+  nobody        Boolean   @default(false)
 }
 
 model story {
-  id            Int    @id @default(autoincrement())
-  title         String
-  link          String
-} 
+  id    Int    @id @default(autoincrement())
+  title String
+  link  String
+}
 
 model post {
-  id           Int     @id @default(autoincrement())
-  link_photo   String
-  link_avatar  String
-  user_name    String
-  title        String
-  like         Int[]
+  id          Int     @id @default(autoincrement())
+  link_photo  String
+  link_avatar String
+  user_name   String
+  title       String
+  like        Int[]
+  type        String?
+  brand_id    Int?
 }
 
 model comment {
-  id           Int     @id @default(autoincrement())
-  user_id      Int
-  post_id      Int
-  created_at   DateTime         @default(now())
-  text         String
-  like         Int[] 
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  post_id    Int
+  created_at DateTime @default(now())
+  text       String
+  like       Int[]
 }
 
 model chat {
-  id           Int     @id @default(autoincrement())
-  users_id     Int[]   
-  updated_at      DateTime         @updatedAt
+  id         Int      @id @default(autoincrement())
+  users_id   Int[]
+  updated_at DateTime @updatedAt
 }
 
 model message {
-  id           Int     @id @default(autoincrement())
-  user_id      Int
-  created_at   DateTime          @default(now())
-  text         String
-  is_read      Boolean           @default(false)
-  chat_id      Int
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  created_at DateTime @default(now())
+  text       String
+  is_read    Boolean  @default(false)
+  chat_id    Int
 }
 
 model request_for_friendship {
-  id           Int     @id @default(autoincrement())
-  creator_id   Int
-  user_id      Int
+  id         Int @id @default(autoincrement())
+  creator_id Int
+  user_id    Int
+}
+
+model brand {
+  id         Int     @id @default(autoincrement())
+  name       String
+  address    String?
+  name_site  String
+  site_link  String
+  link_photo String
+  phone      String?
+  type       String?
+  city       String?
+  hours      String?
+  age        String?
+  category   String?
+  date       String?
+}
+
+model review {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  grade      Int
+  created_at DateTime @default(now())
+  text       String
+  brand_id   Int
+}
+
+model event {
+  id         Int    @id @default(autoincrement())
+  brand_id   Int
+  link_photo String
+  name       String
+  date       String
+}
+
+model subscription {
+  id       Int @id @default(autoincrement())
+  brand_id Int
+  user_id  Int
 }
 
 enum Role {

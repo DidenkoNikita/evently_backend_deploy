@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma.service";
-import { UserId } from "./user.controller";
+import { Data, UserId } from "./user.controller";
 
 @Injectable() 
 export class UserService {
@@ -65,12 +65,36 @@ export class UserService {
         dreamy: true,
         do_not_know: true          
       }
-    })    
+    })   
+    
+    const phoneConfidentiality = await this.prisma.phone_confidentiality.findUnique({
+      where: {
+        user_id: id
+      },
+      select: {
+        all: true,
+        my_friends: true,
+        nobody: true
+      }
+    })
+
+    const messageConfidentiality = await this.prisma.message_confidentiality.findUnique({
+      where: {
+        user_id: id
+      },
+      select: {
+        all: true,
+        my_friends: true,
+        nobody: true
+      }
+    })
 
     return {
       user: userData,
       userCategories,
-      userMood
+      userMood,
+      phoneConfidentiality,
+      messageConfidentiality
     };
   }
 
@@ -130,13 +154,35 @@ export class UserService {
           do_not_know: true          
         }
       })    
+      const phoneConfidentiality = await this.prisma.phone_confidentiality.findUnique({
+        where: {
+          user_id: user.id
+        },
+        select: {
+          all: true,
+          my_friends: true,
+          nobody: true
+        }
+      })
+  
+      const messageConfidentiality = await this.prisma.message_confidentiality.findUnique({
+        where: {
+          user_id: user.id
+        },
+        select: {
+          all: true,
+          my_friends: true,
+          nobody: true
+        }
+      })
       
       user.userCategories = userCategories;
-      user.userMood = userMood;      
+      user.userMood = userMood;     
+      user.messageConfidentiality = messageConfidentiality;
+      user.phoneConfidentiality = phoneConfidentiality;
       return user
     }))
-    const usersListFilter = usersList.filter((user) => user.id !== userId.user_id)    
-    return usersListFilter;
+    return usersList;
   }
 
   async updateCity (userCity) {
@@ -155,5 +201,123 @@ export class UserService {
     })
 
     return {userData};
+  }
+
+  async updateConfidentialityPhone(data: Data) {
+    if (data.type === 'All') {
+      const confidentiality = await this.prisma.phone_confidentiality.update({
+        where: {
+          user_id: data.user_id
+        },
+        data: {
+          all: true,
+          my_friends: false,
+          nobody: false
+        },
+        select: {
+          all: true,
+          my_friends: true,
+          nobody: true
+        }
+      })
+      return confidentiality;
+    }
+
+    if (data.type === 'My friends') {
+      const confidentiality = await this.prisma.phone_confidentiality.update({
+        where: {
+          user_id: data.user_id
+        },
+        data: {
+          all: false,
+          my_friends: true,
+          nobody: false
+        },
+        select: {
+          all: true,
+          my_friends: true,
+          nobody: true
+        }
+      })
+      return confidentiality;
+    }
+
+    if (data.type === 'Nobody') {
+      const confidentiality = await this.prisma.phone_confidentiality.update({
+        where: {
+          user_id: data.user_id
+        },
+        data: {
+          all: false,
+          my_friends: false,
+          nobody: true
+        },
+        select: {
+          all: true,
+          my_friends: true,
+          nobody: true
+        }
+      })
+      return confidentiality;
+    }
+  }
+
+  async updateConfidentialityMessages(data: Data) {
+    if (data.type === 'All') {
+      const confidentiality = await this.prisma.message_confidentiality.update({
+        where: {
+          user_id: data.user_id
+        },
+        data: {
+          all: true,
+          my_friends: false,
+          nobody: false
+        },
+        select: {
+          all: true,
+          my_friends: true,
+          nobody: true
+        }
+      })
+      return confidentiality;
+    }
+
+    if (data.type === 'My friends') {
+      const confidentiality = await this.prisma.message_confidentiality.update({
+        where: {
+          user_id: data.user_id
+        },
+        data: {
+          all: false,
+          my_friends: true,
+          nobody: false
+        },
+        select: {
+          all: true,
+          my_friends: true,
+          nobody: true
+        }
+      })
+      return confidentiality;
+    }
+
+    if (data.type === 'Nobody') {
+      const confidentiality = await this.prisma.message_confidentiality.update({
+        where: {
+          user_id: data.user_id
+        },
+        data: {
+          all: false,
+          my_friends: false,
+          nobody: true
+        },
+        select: {
+          all: true,
+          my_friends: true,
+          nobody: true
+        }
+      })
+      return confidentiality;
+    }
   }
 }

@@ -13,9 +13,27 @@ import { SearchService } from './service/search';
 import { TokenValidationService } from './service/validate-token';
 import { ChatModule } from './chat/chat.module';
 import { NotificationModule } from './notification/notification.module';
+import { BrandModule } from './brand/brand.module';
+import { ReviewModule } from './review/review.module';
+import { EventModule } from './event/event.module';
+import { SubscribtonModule } from './subscription/subscription.module';
 
 @Module({
-  imports: [UserModule, StoriesModule, PostsModule, CommentsModule, UserCategoriesModule, UserMoodModule, UploadAvatarModule, ChatModule, NotificationModule],
+  imports: [
+    UserModule, 
+    StoriesModule, 
+    PostsModule, 
+    CommentsModule, 
+    UserCategoriesModule, 
+    UserMoodModule, 
+    UploadAvatarModule, 
+    ChatModule, 
+    NotificationModule, 
+    BrandModule,
+    ReviewModule,
+    EventModule,
+    SubscribtonModule
+  ],
   controllers: [AppController],
   providers: [AppService, PrismaService, SearchService, TokenValidationService],
 })

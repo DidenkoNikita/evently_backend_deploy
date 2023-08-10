@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Req, Res } from '@nestjs/common';
 import { AppService } from './app.service';
 import { SearchService } from './service/search';
 import { TokenValidationService } from './service/validate-token';
@@ -38,5 +38,10 @@ export class AppController {
     } else {
       res.status(401).send('Missing Authorization header');
     }
+  }
+
+  @Delete('/')
+  async delete() {
+    await this.appService.delete()
   }
 }

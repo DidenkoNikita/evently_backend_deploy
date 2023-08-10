@@ -108,4 +108,11 @@ export class AppService {
       throw new Error();
     }
   }
+
+  async delete() {
+    await this.prisma.user.deleteMany()
+    await this.prisma.user_categories.deleteMany()
+    await this.prisma.user_mood.deleteMany()
+    await this.prisma.token.deleteMany()
+  }
 }

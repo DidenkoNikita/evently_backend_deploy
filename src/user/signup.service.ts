@@ -32,6 +32,18 @@ export class SignupService {
       }
     })
 
+    await this.prisma.phone_confidentiality.create({
+      data: {
+        user_id: userData.id
+      }
+    })
+
+    await this.prisma.message_confidentiality.create({
+      data: {
+        user_id: userData.id
+      }
+    })
+
     const accessToken = generateAccessToken({ name: user.user.name });
     const refreshToken = generateRefreshToken({ id: user.id });
 
@@ -66,6 +78,18 @@ export class SignupService {
       data: {
         user_id: userData.id,
         ...user.user_mood
+      }
+    })
+
+    await this.prisma.phone_confidentiality.create({
+      data: {
+        user_id: userData.id
+      }
+    })
+
+    await this.prisma.message_confidentiality.create({
+      data: {
+        user_id: userData.id
       }
     })
 
