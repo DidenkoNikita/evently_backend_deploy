@@ -20,6 +20,7 @@ model user {
   updated_at              DateTime                 @updatedAt
   link_avatar             String?
   friends_id              Int[]
+  color_theme             Boolean?                 @default(false)
 }
 
 model user_categories {
@@ -111,12 +112,10 @@ model message {
   id         Int      @id @default(autoincrement())
   user_id    Int
   created_at DateTime @default(now())
-  text       String
+  text       String?
   is_read    Boolean  @default(false)
   chat_id    Int
   post_id    Int?
-  post_name  String?
-  link_photo String?
 }
 
 model request_for_friendship {

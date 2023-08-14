@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma.service";
-import { Data, UserId } from "./user.controller";
+import { Data, Theme, UserId } from "./user.controller";
 
 @Injectable() 
 export class UserService {
@@ -21,7 +21,8 @@ export class UserService {
         gender: true,
         city: true,
         link_avatar: true,
-        friends_id: true
+        friends_id: true,
+        color_theme: true
       }
     })
 
@@ -200,6 +201,23 @@ export class UserService {
       }
     })
 
+    return {userData};
+  }
+
+  async changeColorTheme(data: Theme) {
+    const userData = await this.prisma.user.update({
+      where: {
+        id: data.user_id
+      },
+      data: {
+        color_theme: data.theme
+      },
+      select: {
+        color_theme: true
+      }
+    })
+    console.log(userData);
+    
     return {userData};
   }
 

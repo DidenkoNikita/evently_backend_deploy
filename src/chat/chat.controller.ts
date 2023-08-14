@@ -18,12 +18,7 @@ export interface MessageData {
   user_id: number;
   chatId: number;
   user2Id: number;
-  stateData: {
-    post_id: number;
-    post_name: string;
-    link_photo: string;
-    text: string
-  } | null
+  postId: number | null;
 }
 
 export interface UpdateMessage {

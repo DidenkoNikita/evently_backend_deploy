@@ -45,10 +45,11 @@ export class ChatService {
           // };
           // chat.timeMessage = `${formatNumber(time.getHours())}:${formatNumber(time.getMinutes())}`;
           chat.timeMessage = time
-          chat.textMessage = message.text.length >= 20 ? message.text.slice(0, 20) + '...' : message.text
+          chat.textMessage = message?.text?.length >= 20 ? message?.text?.slice(0, 20) + '...' : message?.text
           chat.isReadMessage = message.is_read;
           chat.userId = message.user_id;
           chat.unreadMessages = filterMessage.length;
+          chat.postId = message.post_id
         }
         return chat
       }))
@@ -108,15 +109,14 @@ export class ChatService {
   }
 
   async createMessage(messageData: MessageData) {
-    if (messageData.stateData) {
+    if (messageData.postId) {
+      console.log(messageData);
+      
       const message = await this.prisma.message.create({
         data: {
           user_id: messageData.user_id,
-          text: messageData.stateData.text,
           chat_id: messageData.chatId,
-          post_name: messageData.stateData.post_name,
-          link_photo: messageData.stateData.link_photo,
-          post_id: messageData.stateData.post_id
+          post_id: messageData.postId
         }
       })
       console.log('create message', message);

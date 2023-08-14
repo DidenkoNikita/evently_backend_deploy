@@ -22,7 +22,7 @@ export class CommentsService {
       });
       
       comment.link_avatar = user.link_avatar;
-      comment.user_name = user.name;
+      comment.name = user.name;
       return comment;
     }));
     
@@ -53,6 +53,16 @@ export class CommentsService {
 
   async likeComment(commentDto: LikeCommentDto) {
     const { user_id, comment_id } = commentDto;
+
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: user_id
+      },
+      select: {
+        link_avatar: true,
+        name: true
+      }
+    });
     
     const check = await this.prisma.comment.findFirst({
       where: {
@@ -74,7 +84,7 @@ export class CommentsService {
         },
       });
 
-      return comment;
+      return {...user, ...comment};
     } else {
       const updatedLike = [...check.like, user_id];
       
@@ -87,8 +97,7 @@ export class CommentsService {
         }
       })
 
-      return comment;
-      
+      return {...user, ...comment};
     }
   }
 }

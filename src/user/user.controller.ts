@@ -11,6 +11,11 @@ export interface Data {
   user_id: number;
 }
 
+export interface Theme {
+  theme: boolean;
+  user_id: number;
+}
+
 @Controller()
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -65,6 +70,18 @@ export class UserController {
       console.log(confidentiality);
       
       res.status(200).json(confidentiality);
+    } catch(e) {
+      return console.log(e);
+    }
+  }
+
+  @Put('/change_color_theme')
+  async changeColorTheme(@Body() data: Theme, @Res() res: Response) {
+    try {
+      console.log(data);
+      
+      const user = await this.userService.changeColorTheme(data);
+      res.status(200).json(user);
     } catch(e) {
       return console.log(e);
     }

@@ -32,7 +32,7 @@ export class LoginService {
       })
       const id = user.id
 
-      return {id, accessToken};
+      return {id, accessToken, color_theme: user.color_theme};
     } else {
       throw new Error();
     }
@@ -62,7 +62,7 @@ export class LoginService {
       })
       const id = user.id
 
-      return {id, accessToken, refreshToken};
+      return {id, accessToken, refreshToken, color_theme: user.color_theme};
     } else {
       throw new Error();
     }

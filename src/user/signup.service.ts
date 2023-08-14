@@ -55,7 +55,7 @@ export class SignupService {
     })
     const id = userData.id;
     
-    return {id, accessToken};
+    return {id, accessToken, color_theme: userData.color_theme};
   }
 
   async createUserWithRememberMe(user) {
@@ -104,6 +104,6 @@ export class SignupService {
     })
     const id = userData.id;
     
-    return {id, accessToken, refreshToken};
+    return {id, accessToken, refreshToken, color_theme: userData.color_theme};
   }
 }

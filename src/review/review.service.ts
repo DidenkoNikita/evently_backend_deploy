@@ -20,7 +20,7 @@ export class ReviewService {
         }
       })
       review.link_avatar = user.link_avatar;
-      review.user_name = user.name;
+      review.name = user.name;
       return review;
     }))
 
