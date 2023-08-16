@@ -8,19 +8,19 @@ datasource db {
 }
 
 model user {
-  id                      Int                      @id @default(autoincrement())
-  phone                   String                   @unique
-  name                    String
-  date_of_birth           String
-  gender                  String
-  password                String
-  city                    String
-  Role                    Role                     @default(USER)
-  created_at              DateTime                 @default(now())
-  updated_at              DateTime                 @updatedAt
-  link_avatar             String?
-  friends_id              Int[]
-  color_theme             Boolean?                 @default(false)
+  id            Int      @id @default(autoincrement())
+  phone         String   @unique
+  name          String
+  date_of_birth String
+  gender        String
+  password      String
+  city          String
+  Role          Role     @default(USER)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+  link_avatar   String?
+  friends_id    Int[]
+  color_theme   Boolean? @default(false)
 }
 
 model user_categories {
@@ -63,17 +63,17 @@ model token {
 }
 
 model phone_confidentiality {
-  user_id       Int       @unique
-  all           Boolean   @default(true)
-  my_friends    Boolean   @default(false)
-  nobody        Boolean   @default(false)
+  user_id    Int     @unique
+  all        Boolean @default(true)
+  my_friends Boolean @default(false)
+  nobody     Boolean @default(false)
 }
 
 model message_confidentiality {
-  user_id       Int       @unique
-  all           Boolean   @default(true)
-  my_friends    Boolean   @default(false)
-  nobody        Boolean   @default(false)
+  user_id    Int     @unique
+  all        Boolean @default(true)
+  my_friends Boolean @default(false)
+  nobody     Boolean @default(false)
 }
 
 model story {

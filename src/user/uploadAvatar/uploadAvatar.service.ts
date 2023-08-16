@@ -1,11 +1,15 @@
-import { PrismaService } from "src/prisma.service";
 import { Injectable } from '@nestjs/common';
+
 import * as AWS from 'aws-sdk';
+
+import { Avatar } from './interface';
+import { PrismaService } from "src/prisma.service";
 
 @Injectable()
 export class UploadService {
-  constructor(private prisma: PrismaService) {}
-  async uploadFile(file, id) {
+  constructor(private prisma: PrismaService) { }
+
+  async uploadFile(file, id: number): Promise<void | Avatar> {
     try {
       const s3 = new AWS.S3({
         accessKeyId: 'YCAJE3hsaFeXWP4qWEJaz8_8E',
@@ -36,10 +40,9 @@ export class UploadService {
           link_avatar: fileUrl
         },
       })
-      return {link_avatar: fileUrl};
-    } catch (error) {
-      console.error('Ошибка при загрузке файла в Yandex Cloud', error);
-      throw error;
+      return { link_avatar: fileUrl };
+    } catch (e) {
+      return console.log(e);
     }
   }
 }

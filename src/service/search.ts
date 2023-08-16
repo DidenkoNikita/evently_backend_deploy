@@ -1,14 +1,15 @@
-import { Prisma } from '@prisma/client';
 import { Injectable } from '@nestjs/common';
+
+import { Token, User } from './interface';
 import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
 export class SearchService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async findTokenByUserId(userId: number): Promise<{ refresh_token: string } | null> {
     try {
-      const token = await this.prisma.token.findUnique({
+      const token: Token = await this.prisma.token.findUnique({
         where: {
           user_id: userId,
         },
@@ -24,7 +25,7 @@ export class SearchService {
 
   async findUserById(userId: number): Promise<{ name: string } | null> {
     try {
-      const user = await this.prisma.user.findFirst({
+      const user: User = await this.prisma.user.findFirst({
         where: {
           id: userId,
         },

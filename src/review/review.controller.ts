@@ -1,38 +1,30 @@
 import { Body, Controller, Post, Res } from "@nestjs/common";
+
 import { Response } from "express";
+
 import { ReviewService } from "./review.service";
-
-export interface Data {
-  user_id: number;
-  grade: number;
-  text: string;
-  brand_id: number;
-}
-
-export interface GetReview {
-  user_id: number;
-} 
+import { GetReview, Data, UpdateReview } from "./interface";
 
 @Controller()
 export class ReviewController {
-  constructor (private readonly reviewService: ReviewService) {}
+  constructor(private readonly reviewService: ReviewService) { }
 
   @Post('/get_review')
-  async getReview(@Body() data: GetReview, @Res() res: Response) {
+  async getReview(@Body() data: GetReview, @Res() res: Response): Promise<void> {
     try {
-      const reviewList = await this.reviewService.getReview(data);
+      const reviewList: void | UpdateReview[] = await this.reviewService.getReview(data);
       res.status(200).json(reviewList);
-    } catch(e) {
+    } catch (e) {
       return console.log(e);
     }
   }
 
   @Post('/create_review')
-  async createReview(@Body() data: Data, @Res() res: Response) {
+  async createReview(@Body() data: Data, @Res() res: Response): Promise<void> {
     try {
-      const review = await this.reviewService.createReview(data);
+      const review: void | UpdateReview = await this.reviewService.createReview(data);
       res.status(200).json(review);
-    } catch(e) {
+    } catch (e) {
       return console.log(e);
     }
   }

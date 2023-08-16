@@ -1,14 +1,20 @@
 import { MiddlewareConsumer, Module, NestMiddleware, RequestMethod } from "@nestjs/common";
+
 import { PrismaService } from "src/prisma.service";
-import { CommentsController } from "./comments.controller";
-import { CommentsService } from "./comments.service";
-import { CheckTokenMiddleware } from "src/middleware/checkToken.middleware";
 import { SearchService } from "src/service/search";
+import { CommentsService } from "./comments.service";
+import { CommentsController } from "./comments.controller";
 import { TokenValidationService } from "src/service/validate-token";
+import { CheckTokenMiddleware } from "src/middleware/checkToken.middleware";
 
 @Module({
   controllers: [CommentsController],
-  providers: [PrismaService, CommentsService, SearchService, TokenValidationService]
+  providers: [
+    SearchService,
+    PrismaService,
+    CommentsService,
+    TokenValidationService
+  ]
 })
 export class CommentsModule implements NestMiddleware {
   use(req: any, res: any, next: (error?: any) => void) {
@@ -18,7 +24,7 @@ export class CommentsModule implements NestMiddleware {
     consumer
       .apply(CheckTokenMiddleware)
       .exclude(
-        {path: 'comments', method: RequestMethod.GET}
+        { path: 'comments', method: RequestMethod.GET }
       )
       .forRoutes(CommentsController)
   }

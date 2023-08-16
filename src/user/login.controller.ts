@@ -1,32 +1,28 @@
 import { Body, Controller, Post } from "@nestjs/common";
-import { UserLoginDto } from "./dto/user-login.dto";
-import { LoginService } from "./login.service";
 
-export interface User {
-  id: number,
-  accessToken: string
-}
+import { LoginService } from "./login.service";
+import { LoginI, ReturnLogin } from "./interface";
 
 @Controller()
 export class LoginController {
-  constructor(private readonly loginService: LoginService) {};
+  constructor(private readonly loginService: LoginService) { };
 
   @Post('login')
-  login(@Body() userLoginDto) {
+  login(@Body() userLoginDto: LoginI): void | Promise<void | ReturnLogin> {
     try {
-      const user = userLoginDto.user      
+      const user = userLoginDto.user;
       return this.loginService.signin(user)
-    } catch(e) {
+    } catch (e) {
       return console.log(e);
     }
   }
 
   @Post('login_remember_me')
-  loginWithRememberMe(@Body() userLoginDto) {
+  loginWithRememberMe(@Body() userLoginDto: LoginI): void | Promise<void | ReturnLogin> {
     try {
-      const user = userLoginDto.user      
+      const user = userLoginDto.user;
       return this.loginService.signinWithRememberMe(user)
-    } catch(e) {
+    } catch (e) {
       return console.log(e);
     }
   }

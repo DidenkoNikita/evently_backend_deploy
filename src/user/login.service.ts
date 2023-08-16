@@ -1,70 +1,122 @@
 import { Injectable } from "@nestjs/common";
+
 import { PrismaClient } from "@prisma/client";
-import { UserLoginDto } from "./dto/user-login.dto";
+
 import { passwordVerifying } from "src/service/password-hashing";
+import { Login, ReturnLogin, UpdateUser, User } from "./interface";
 import { generateAccessToken, generateRefreshToken } from "src/service/generate-token";
 
-@Injectable() 
+@Injectable()
 export class LoginService {
-  constructor(private prisma: PrismaClient) {};
+  constructor(private prisma: PrismaClient) { };
 
-  async signin(userLoginDto: UserLoginDto) {
-    const user = await this.prisma.user.findUnique({
-      where: {
-        phone: userLoginDto.phone
-      }
-    })
-    const verifyPassword = await passwordVerifying(user.password, userLoginDto.password);
-    if (user && verifyPassword) {
-      const refreshToken = generateRefreshToken({id: user.id});
-      const accessToken = generateAccessToken({name: user.name})
-      await this.prisma.token.upsert({
+  async signin(userLoginDto: Login): Promise<void | ReturnLogin> {
+    try {
+      const user: User = await this.prisma.user.findUnique({
         where: {
-          user_id: user.id
+          phone: userLoginDto.phone
         },
-        update: {
-          refresh_token: refreshToken
-        },
-        create: {
-          user_id: user.id,
-          refresh_token: refreshToken
+        select: {
+          id: true,
+          password: true,
+          name: true
         }
       })
-      const id = user.id
-
-      return {id, accessToken, color_theme: user.color_theme};
-    } else {
-      throw new Error();
+      const verifyPassword = await passwordVerifying(user.password, userLoginDto.password);
+      if (user && verifyPassword) {
+        const refreshToken: string = generateRefreshToken({ id: user.id });
+        const accessToken: string = generateAccessToken({ name: user.name });
+        await this.prisma.token.upsert({
+          where: {
+            user_id: user.id
+          },
+          update: {
+            refresh_token: refreshToken
+          },
+          create: {
+            user_id: user.id,
+            refresh_token: refreshToken
+          }
+        })
+  
+        const updatedUser: UpdateUser = await this.prisma.user.update({
+          where: {
+            id: user.id
+          },
+          data: {
+            color_theme: userLoginDto.color_theme
+          },
+          select: {
+            color_theme: true
+          }
+        })
+        const id = user.id
+  
+        return { 
+          id, 
+          accessToken, 
+          color_theme: updatedUser.color_theme 
+        };
+      } else {
+        throw new Error();
+      }
+    } catch (e) {
+      return console.log(e);
     }
   }
 
-  async signinWithRememberMe(userLoginDto: UserLoginDto) {
-    const user = await this.prisma.user.findUnique({
-      where: {
-        phone: userLoginDto.phone
-      }
-    })
-    const verifyPassword = await passwordVerifying(user.password, userLoginDto.password);
-    if (user && verifyPassword) {
-      const refreshToken = generateRefreshToken({id: user.id});
-      const accessToken = generateAccessToken({name: user.name})
-      await this.prisma.token.upsert({
+  async signinWithRememberMe(userLoginDto: Login): Promise<void | ReturnLogin> {
+    try {
+      const user: User = await this.prisma.user.findUnique({
         where: {
-          user_id: user.id
+          phone: userLoginDto.phone
         },
-        update: {
-          refresh_token: refreshToken
-        },
-        create: {
-          user_id: user.id,
-          refresh_token: refreshToken
+        select: {
+          id: true,
+          password: true,
+          name: true
         }
       })
-      const id = user.id
-
-      return {id, accessToken, refreshToken, color_theme: user.color_theme};
-    } else {
-      throw new Error();
+      const verifyPassword = await passwordVerifying(user.password, userLoginDto.password);
+      if (user && verifyPassword) {
+        const refreshToken: string = generateRefreshToken({ id: user.id });
+        const accessToken: string = generateAccessToken({ name: user.name });
+        await this.prisma.token.upsert({
+          where: {
+            user_id: user.id
+          },
+          update: {
+            refresh_token: refreshToken
+          },
+          create: {
+            user_id: user.id,
+            refresh_token: refreshToken
+          }
+        })
+        const updatedUser: UpdateUser = await this.prisma.user.update({
+          where: {
+            id: user.id
+          },
+          data: {
+            color_theme: userLoginDto.color_theme
+          },
+          select: {
+            color_theme: true
+          }
+        })
+        const id = user.id
+  
+        return { 
+          id, 
+          accessToken, 
+          refreshToken, 
+          color_theme: updatedUser.color_theme 
+        };
+      } else {
+        throw new Error();
+      }
+    } catch (e) {
+      return console.log(e);
     }
   }
 }

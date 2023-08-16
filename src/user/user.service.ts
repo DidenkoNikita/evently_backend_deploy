@@ -1,341 +1,367 @@
 import { Injectable } from "@nestjs/common";
+
+import { Mood } from "./userMood/interface";
 import { PrismaService } from "src/prisma.service";
-import { Data, Theme, UserId } from "./user.controller";
+import { Categories } from "./userCategories/interface";
+import { City, ColorTheme, Confidentiality, DataType, Theme, UserCity, UserId, UserList, UserSearch } from "./interface";
 
-@Injectable() 
+@Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
-  async getUser (userId: UserId) {
-    const id = userId.user_id
-    
-    const userData = await this.prisma.user.findUnique({
-      where: {
-        id: id
-      },
-      select: {
-        id: true,
-        phone: true,
-        name: true,
-        date_of_birth: true,
-        gender: true,
-        city: true,
-        link_avatar: true,
-        friends_id: true,
-        color_theme: true
-      }
-    })
+  async getUser(userId: UserId): Promise<void | UserList> {
+    try {
+      const id: number = userId.user_id;
 
-    const userCategories = await this.prisma.user_categories.findUnique({
-      where: {
-        user_id: id
-      },
-      select: {
-        restaurants: true,
-        trade_fairs: true,
-        lectures: true,
-        cafe: true,
-        bars: true,
-        sport: true,
-        dancing: true,
-        games: true,
-        quests: true,
-        concerts: true,
-        parties: true,
-        show: true,
-        for_free: true,
-        cinema: true,
-        theaters: true
-      }
-    })
-
-    const userMood = await this.prisma.user_mood.findUnique({
-      where: {
-        user_id: id
-      },
-      select: {
-        funny: true,
-        sad: true,
-        gambling: true,
-        romantic: true,
-        energetic: true,
-        festive: true,
-        calm: true,
-        friendly: true,
-        cognitive: true,
-        dreamy: true,
-        do_not_know: true          
-      }
-    })   
-    
-    const phoneConfidentiality = await this.prisma.phone_confidentiality.findUnique({
-      where: {
-        user_id: id
-      },
-      select: {
-        all: true,
-        my_friends: true,
-        nobody: true
-      }
-    })
-
-    const messageConfidentiality = await this.prisma.message_confidentiality.findUnique({
-      where: {
-        user_id: id
-      },
-      select: {
-        all: true,
-        my_friends: true,
-        nobody: true
-      }
-    })
-
-    return {
-      user: userData,
-      userCategories,
-      userMood,
-      phoneConfidentiality,
-      messageConfidentiality
-    };
-  }
-
-  async getUserList (userId: UserId) {
-    const users = await this.prisma.user.findMany({
-      select: {
-        id: true,
-        name: true,
-        link_avatar: true,
-        phone: true,
-        city: true,
-        date_of_birth: true,
-        gender: true,
-        friends_id: true
-      }
-    });
-
-    const usersList = await Promise.all(users.map(async (user: any) => {
-      const userCategories = await this.prisma.user_categories.findUnique({
+      const userData: UserSearch = await this.prisma.user.findUnique({
         where: {
-          user_id: user.id
+          id: id
         },
         select: {
-          restaurants: true,
-          trade_fairs: true,
-          lectures: true,
-          cafe: true,
-          bars: true,
-          sport: true,
-          dancing: true,
-          games: true,
-          quests: true,
-          concerts: true,
-          parties: true,
-          show: true,
-          for_free: true,
-          cinema: true,
-          theaters: true
+          id: true,
+          name: true,
+          city: true,
+          phone: true,
+          gender: true,
+          friends_id: true,
+          link_avatar: true,
+          color_theme: true,
+          date_of_birth: true
         }
       })
 
-      const userMood = await this.prisma.user_mood.findUnique({
+      const userCategories: Categories = await this.prisma.user_categories.findUnique({
         where: {
-          user_id: user.id
+          user_id: id
         },
         select: {
-          funny: true,
+          cafe: true,
+          bars: true,
+          show: true,
+          sport: true,
+          games: true,
+          quests: true,
+          cinema: true,
+          dancing: true,
+          parties: true,
+          theaters: true,
+          lectures: true,
+          concerts: true,
+          for_free: true,
+          restaurants: true,
+          trade_fairs: true
+        }
+      })
+
+      const userMood: Mood = await this.prisma.user_mood.findUnique({
+        where: {
+          user_id: id
+        },
+        select: {
           sad: true,
+          calm: true,
+          funny: true,
+          dreamy: true,
+          festive: true,
+          friendly: true,
           gambling: true,
           romantic: true,
           energetic: true,
-          festive: true,
-          calm: true,
-          friendly: true,
           cognitive: true,
-          dreamy: true,
-          do_not_know: true          
+          do_not_know: true
         }
-      })    
-      const phoneConfidentiality = await this.prisma.phone_confidentiality.findUnique({
+      })
+
+      const phoneConfidentiality: Confidentiality = await this.prisma.phone_confidentiality.findUnique({
         where: {
-          user_id: user.id
+          user_id: id
         },
         select: {
           all: true,
-          my_friends: true,
-          nobody: true
+          nobody: true,
+          my_friends: true
         }
       })
-  
-      const messageConfidentiality = await this.prisma.message_confidentiality.findUnique({
+
+      const messageConfidentiality: Confidentiality = await this.prisma.message_confidentiality.findUnique({
         where: {
-          user_id: user.id
+          user_id: id
         },
         select: {
           all: true,
-          my_friends: true,
-          nobody: true
+          nobody: true,
+          my_friends: true
         }
       })
-      
-      user.userCategories = userCategories;
-      user.userMood = userMood;     
-      user.messageConfidentiality = messageConfidentiality;
-      user.phoneConfidentiality = phoneConfidentiality;
-      return user
-    }))
-    return usersList;
+
+      return {
+        user: userData,
+        userCategories,
+        userMood,
+        phoneConfidentiality,
+        messageConfidentiality
+      };
+    } catch (e) {
+      return console.log(e);
+    }
   }
 
-  async updateCity (userCity) {
-    const id = userCity.user_id
-    
-    const userData = await this.prisma.user.update({
-      where: {
-        id: id
-      },
-      data: {
-        city: userCity.city
-      },
-      select: {
-        city: true
+  async getUserList(): Promise<void | UserList[]> {
+    try {
+      const users: UserSearch[] = await this.prisma.user.findMany({
+        select: {
+          id: true,
+          name: true,
+          city: true,
+          phone: true,
+          gender: true,
+          friends_id: true,
+          link_avatar: true,
+          date_of_birth: true,
+        }
+      });
+
+      const usersList: UserList[] = await Promise.all(users.map(async (user: any) => {
+        const userCategories: Categories = await this.prisma.user_categories.findUnique({
+          where: {
+            user_id: user.id
+          },
+          select: {
+            cafe: true,
+            bars: true,
+            show: true,
+            sport: true,
+            games: true,
+            quests: true,
+            cinema: true,
+            parties: true,
+            dancing: true,
+            lectures: true,
+            concerts: true,
+            for_free: true,
+            theaters: true,
+            restaurants: true,
+            trade_fairs: true
+          }
+        })
+
+        const userMood: Mood = await this.prisma.user_mood.findUnique({
+          where: {
+            user_id: user.id
+          },
+          select: {
+            sad: true,
+            calm: true,
+            funny: true,
+            dreamy: true,
+            festive: true,
+            gambling: true,
+            romantic: true,
+            friendly: true,
+            energetic: true,
+            cognitive: true,
+            do_not_know: true
+          }
+        })
+        const phoneConfidentiality: Confidentiality = await this.prisma.phone_confidentiality.findUnique({
+          where: {
+            user_id: user.id
+          },
+          select: {
+            all: true,
+            nobody: true,
+            my_friends: true
+          }
+        })
+
+        const messageConfidentiality: Confidentiality = await this.prisma.message_confidentiality.findUnique({
+          where: {
+            user_id: user.id
+          },
+          select: {
+            all: true,
+            nobody: true,
+            my_friends: true
+          }
+        })
+
+        user.userCategories = userCategories;
+        user.userMood = userMood;
+        user.messageConfidentiality = messageConfidentiality;
+        user.phoneConfidentiality = phoneConfidentiality;
+        return user
+      }))
+      return usersList;
+    } catch (e) {
+      return console.log(e);
+    }
+  }
+
+  async updateCity(userCity: UserCity): Promise<void | { userData: City }> {
+    try {
+      const id: number = userCity.user_id;
+
+      const userData: City = await this.prisma.user.update({
+        where: {
+          id: id
+        },
+        data: {
+          city: userCity.city
+        },
+        select: {
+          city: true
+        }
+      })
+
+      return { userData };
+    } catch (e) {
+      return console.log(e);
+    }
+  }
+
+  async changeColorTheme(data: Theme): Promise<void | { userData: ColorTheme }> {
+    try {
+      const userData: ColorTheme = await this.prisma.user.update({
+        where: {
+          id: data.user_id
+        },
+        data: {
+          color_theme: data.theme
+        },
+        select: {
+          color_theme: true
+        }
+      })
+
+      return { userData };
+    } catch (e) {
+      return console.log(e);
+    }
+  }
+
+  async updateConfidentialityPhone(data: DataType): Promise<void | Confidentiality> {
+    try {
+      if (data.type === 'All') {
+        const confidentiality: Confidentiality = await this.prisma.phone_confidentiality.update({
+          where: {
+            user_id: data.user_id
+          },
+          data: {
+            all: true,
+            nobody: false,
+            my_friends: false
+          },
+          select: {
+            all: true,
+            nobody: true,
+            my_friends: true
+          }
+        })
+        return confidentiality;
       }
-    })
 
-    return {userData};
-  }
-
-  async changeColorTheme(data: Theme) {
-    const userData = await this.prisma.user.update({
-      where: {
-        id: data.user_id
-      },
-      data: {
-        color_theme: data.theme
-      },
-      select: {
-        color_theme: true
+      if (data.type === 'My friends') {
+        const confidentiality: Confidentiality = await this.prisma.phone_confidentiality.update({
+          where: {
+            user_id: data.user_id
+          },
+          data: {
+            all: false,
+            nobody: false,
+            my_friends: true
+          },
+          select: {
+            all: true,
+            my_friends: true,
+            nobody: true
+          }
+        })
+        return confidentiality;
       }
-    })
-    console.log(userData);
-    
-    return {userData};
-  }
 
-  async updateConfidentialityPhone(data: Data) {
-    if (data.type === 'All') {
-      const confidentiality = await this.prisma.phone_confidentiality.update({
-        where: {
-          user_id: data.user_id
-        },
-        data: {
-          all: true,
-          my_friends: false,
-          nobody: false
-        },
-        select: {
-          all: true,
-          my_friends: true,
-          nobody: true
-        }
-      })
-      return confidentiality;
-    }
-
-    if (data.type === 'My friends') {
-      const confidentiality = await this.prisma.phone_confidentiality.update({
-        where: {
-          user_id: data.user_id
-        },
-        data: {
-          all: false,
-          my_friends: true,
-          nobody: false
-        },
-        select: {
-          all: true,
-          my_friends: true,
-          nobody: true
-        }
-      })
-      return confidentiality;
-    }
-
-    if (data.type === 'Nobody') {
-      const confidentiality = await this.prisma.phone_confidentiality.update({
-        where: {
-          user_id: data.user_id
-        },
-        data: {
-          all: false,
-          my_friends: false,
-          nobody: true
-        },
-        select: {
-          all: true,
-          my_friends: true,
-          nobody: true
-        }
-      })
-      return confidentiality;
+      if (data.type === 'Nobody') {
+        const confidentiality: Confidentiality = await this.prisma.phone_confidentiality.update({
+          where: {
+            user_id: data.user_id
+          },
+          data: {
+            all: false,
+            nobody: true,
+            my_friends: false
+          },
+          select: {
+            all: true,
+            nobody: true,
+            my_friends: true
+          }
+        })
+        return confidentiality;
+      }
+    } catch (e) {
+      return console.log(e);
     }
   }
 
-  async updateConfidentialityMessages(data: Data) {
-    if (data.type === 'All') {
-      const confidentiality = await this.prisma.message_confidentiality.update({
-        where: {
-          user_id: data.user_id
-        },
-        data: {
-          all: true,
-          my_friends: false,
-          nobody: false
-        },
-        select: {
-          all: true,
-          my_friends: true,
-          nobody: true
-        }
-      })
-      return confidentiality;
-    }
+  async updateConfidentialityMessages(data: DataType) {
+    try {
+      if (data.type === 'All') {
+        const confidentiality: Confidentiality = await this.prisma.message_confidentiality.update({
+          where: {
+            user_id: data.user_id
+          },
+          data: {
+            all: true,
+            nobody: false,
+            my_friends: false
+          },
+          select: {
+            all: true,
+            nobody: true,
+            my_friends: true
+          }
+        })
+        return confidentiality;
+      }
 
-    if (data.type === 'My friends') {
-      const confidentiality = await this.prisma.message_confidentiality.update({
-        where: {
-          user_id: data.user_id
-        },
-        data: {
-          all: false,
-          my_friends: true,
-          nobody: false
-        },
-        select: {
-          all: true,
-          my_friends: true,
-          nobody: true
-        }
-      })
-      return confidentiality;
-    }
+      if (data.type === 'My friends') {
+        const confidentiality: Confidentiality = await this.prisma.message_confidentiality.update({
+          where: {
+            user_id: data.user_id
+          },
+          data: {
+            all: false,
+            nobody: false,
+            my_friends: true
+          },
+          select: {
+            all: true,
+            nobody: true,
+            my_friends: true
+          }
+        })
+        return confidentiality;
+      }
 
-    if (data.type === 'Nobody') {
-      const confidentiality = await this.prisma.message_confidentiality.update({
-        where: {
-          user_id: data.user_id
-        },
-        data: {
-          all: false,
-          my_friends: false,
-          nobody: true
-        },
-        select: {
-          all: true,
-          my_friends: true,
-          nobody: true
-        }
-      })
-      return confidentiality;
+      if (data.type === 'Nobody') {
+        const confidentiality: Confidentiality = await this.prisma.message_confidentiality.update({
+          where: {
+            user_id: data.user_id
+          },
+          data: {
+            all: false,
+            nobody: true,
+            my_friends: false
+          },
+          select: {
+            all: true,
+            nobody: true,
+            my_friends: true
+          }
+        })
+        return confidentiality;
+      }
+    } catch (e) {
+      return console.log(e);
     }
   }
 }

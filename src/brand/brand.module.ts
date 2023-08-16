@@ -1,14 +1,20 @@
 import { MiddlewareConsumer, Module, NestMiddleware } from "@nestjs/common";
-import { CheckTokenMiddleware } from "src/middleware/checkToken.middleware";
+
+import { BrandService } from "./brand.service";
 import { PrismaService } from "src/prisma.service";
 import { SearchService } from "src/service/search";
-import { TokenValidationService } from "src/service/validate-token";
 import { BrandController } from "./brand.controller";
-import { BrandService } from "./brand.service";
+import { TokenValidationService } from "src/service/validate-token";
+import { CheckTokenMiddleware } from "src/middleware/checkToken.middleware";
 
 @Module({
   controllers: [BrandController],
-  providers: [PrismaService, SearchService, TokenValidationService, BrandService]
+  providers: [
+    BrandService,
+    PrismaService,
+    SearchService,
+    TokenValidationService
+  ]
 })
 export class BrandModule implements NestMiddleware {
   use(req: any, res: any, next: (error?: any) => void) {

@@ -1,40 +1,40 @@
 import { Body, Controller, Get, Post, Put, Res } from "@nestjs/common";
-import { CommentsService } from "./comments.service";
+
 import { Response } from "express";
 
-export interface CommentDto {
-  user_id: number;
-  post_id: number;
-  text: string;
-}
-
-export interface LikeCommentDto {
-  user_id: number;
-  comment_id: number;
-}
+import { CommentsService } from "./comments.service";
+import { CommentDto, LikeCommentDto, UpdateComment } from "./interface";
 
 @Controller('/comments')
 export class CommentsController {
-  constructor(private readonly commentsService : CommentsService) {}
+  constructor(private readonly commentsService: CommentsService) { }
 
   @Get()
-  comments() {
+  async comments(): Promise<void | UpdateComment[]> {
     try {
-      return this.commentsService.getComments();
-    } catch(e) {
+      return await this.commentsService.getComments();
+    } catch (e) {
       return console.log(e);
     }
   }
 
   @Post()
-  async createComment(@Body() comment: CommentDto, @Res() res: Response) {
-    const post = await this.commentsService.createComment(comment);
-    res.status(200).json(post);
+  async createComment(@Body() comment: CommentDto, @Res() res: Response): Promise<void> {
+    try {
+      const comm: void | UpdateComment = await this.commentsService.createComment(comment);
+      res.status(200).json(comm);
+    } catch (e) {
+      return console.log(e);
+    }
   }
 
   @Put()
-  async likeComment(@Body() comment: LikeCommentDto, @Res() res: Response) {
-    const post = await this.commentsService.likeComment(comment);
-    res.status(200).json(post)
+  async likeComment(@Body() comment: LikeCommentDto, @Res() res: Response): Promise<void> {
+    try {
+      const comm: void | UpdateComment = await this.commentsService.likeComment(comment);
+      res.status(200).json(comm);
+    } catch (e) {
+      return console.log(e);
+    }
   }
 }

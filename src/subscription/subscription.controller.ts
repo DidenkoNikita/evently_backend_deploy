@@ -1,46 +1,40 @@
 import { Body, Controller, Delete, Post, Res } from "@nestjs/common";
-import { SubscribtionService } from "./subscription.service";
+
 import { Response } from "express";
 
-export interface GetSubscribtion {
-  user_id: number;
-}
-
-export interface Data {
-  user_id: number;
-  brand_id: number;
-}
+import { SubscribtionService } from "./subscription.service";
+import { Data, GetSubscribtion, UpdateSubscription } from "./interface";
 
 @Controller()
 export class SubscribtionController {
-  constructor(private readonly subscribtionService: SubscribtionService) {}
+  constructor(private readonly subscribtionService: SubscribtionService) { }
 
   @Post('/get_subscribtion')
-  async getSubscription(@Body() data: GetSubscribtion, @Res() res: Response) {
+  async getSubscription(@Body() data: GetSubscribtion, @Res() res: Response): Promise<void> {
     try {
-      const subscriptions = await this.subscribtionService.getSubscription(data);
+      const subscriptions: void | UpdateSubscription[] = await this.subscribtionService.getSubscription(data);
       res.status(200).json(subscriptions);
-    } catch(e) {
+    } catch (e) {
       return console.log(e);
     }
   }
 
   @Post('/create_subscription')
-  async createSubscription(@Body() data: Data, @Res() res: Response) {
+  async createSubscription(@Body() data: Data, @Res() res: Response): Promise<void> {
     try {
-      const subscription = await this.subscribtionService.createSubscription(data);
+      const subscription: void | UpdateSubscription = await this.subscribtionService.createSubscription(data);
       res.status(200).json(subscription);
-    } catch(e) {
+    } catch (e) {
       return console.log(e);
     }
   }
 
   @Delete('remove_subscription')
-  async removeSubscription(@Body() data: Data, @Res() res: Response) {
+  async removeSubscription(@Body() data: Data, @Res() res: Response): Promise<void> {
     try {
-      const subscription = await this.subscribtionService.removeSubscription(data);
+      const subscription: void | UpdateSubscription = await this.subscribtionService.removeSubscription(data);
       res.status(200).json(subscription);
-    } catch(e) {
+    } catch (e) {
       return console.log(e);
     }
   }

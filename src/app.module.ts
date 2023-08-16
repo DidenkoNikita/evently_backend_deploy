@@ -1,40 +1,46 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
+
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
-import { PrismaService } from './prisma.service';
-import { StoriesModule } from './stories/stories.module';
-import { PostsModule } from './posts/posts.module';
-import { CommentsModule } from './comments/comments.module';
-import { UserCategoriesModule } from './user/userCategories/userCategories.module';
-import { UserMoodModule } from './user/userMood/userMood.module';
-import { UploadAvatarModule } from './user/uploadAvatar/uploadAvatar.module';
-import { SearchService } from './service/search';
-import { TokenValidationService } from './service/validate-token';
 import { ChatModule } from './chat/chat.module';
-import { NotificationModule } from './notification/notification.module';
+import { AppController } from './app.controller';
+import { PrismaService } from './prisma.service';
+import { SearchService } from './service/search';
+import { PostsModule } from './posts/posts.module';
 import { BrandModule } from './brand/brand.module';
-import { ReviewModule } from './review/review.module';
 import { EventModule } from './event/event.module';
+import { ReviewModule } from './review/review.module';
+import { StoriesModule } from './stories/stories.module';
+import { CommentsModule } from './comments/comments.module';
+import { UserMoodModule } from './user/userMood/userMood.module';
+import { TokenValidationService } from './service/validate-token';
 import { SubscribtonModule } from './subscription/subscription.module';
+import { NotificationModule } from './notification/notification.module';
+import { UploadAvatarModule } from './user/uploadAvatar/uploadAvatar.module';
+import { UserCategoriesModule } from './user/userCategories/userCategories.module';
 
 @Module({
   imports: [
-    UserModule, 
-    StoriesModule, 
-    PostsModule, 
-    CommentsModule, 
-    UserCategoriesModule, 
-    UserMoodModule, 
-    UploadAvatarModule, 
-    ChatModule, 
-    NotificationModule, 
+    UserModule,
+    ChatModule,
+    EventModule,
+    PostsModule,
     BrandModule,
     ReviewModule,
-    EventModule,
-    SubscribtonModule
+    StoriesModule,
+    CommentsModule,
+    UserMoodModule,
+    SubscribtonModule,
+    UploadAvatarModule,
+    NotificationModule,
+    UserCategoriesModule
   ],
   controllers: [AppController],
-  providers: [AppService, PrismaService, SearchService, TokenValidationService],
+  providers: [
+    AppService,
+    PrismaService,
+    SearchService,
+    TokenValidationService
+  ],
 })
-export class AppModule {};
+export class AppModule { };

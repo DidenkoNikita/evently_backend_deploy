@@ -1,20 +1,21 @@
 import { Injectable } from '@nestjs/common';
+
 import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class TokenValidationService {
-  validateAccessToken(accessToken: string): any {
+  validateAccessToken(accessToken: string): string | jwt.JwtPayload {
     try {
-      const validateAccessToken = jwt.verify(accessToken, process.env.JWT_ACCESS_SECRET);
+      const validateAccessToken: string | jwt.JwtPayload = jwt.verify(accessToken, process.env.JWT_ACCESS_SECRET);
       return validateAccessToken;
     } catch (e) {
       return null;
     }
   }
 
-  validateRefreshToken(refreshToken: string): any {
+  validateRefreshToken(refreshToken: string): string | jwt.JwtPayload {
     try {
-      const validateRefreshToken = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+      const validateRefreshToken: string | jwt.JwtPayload = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
       return validateRefreshToken;
     } catch (e) {
       return null;
