@@ -4,5 +4,10 @@
   "sourceRoot": "src",
   "compilerOptions": {
     "deleteOutDir": true
+  },
+  "scripts": {
+    "dev": "npm run start:dev",
+    "build": "npm run build",
+    "start": "node dist/main"
   }
 }
