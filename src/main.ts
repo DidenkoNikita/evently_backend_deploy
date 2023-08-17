@@ -5,7 +5,11 @@ import { PrismaService } from './prisma.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableCors();
+  app.enableCors({
+    origin: 'https://evently-frontend-tivl.vercel.app',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  });
   await app.listen(3000);
   const prismaService = app.get(PrismaService);
   await prismaService.enableShutdownHooks(app);
