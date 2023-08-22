@@ -111,6 +111,7 @@ export interface UserSearch {
   friends_id: number[];
   link_avatar: string;
   color_theme?: boolean;
+  mute_users?: number[];
   date_of_birth: string;
 }
 
@@ -139,4 +140,13 @@ export interface City {
 
 export interface ColorTheme {
   color_theme: boolean;
+}
+
+export interface MuteUser {
+  user_id: number;
+  id: number;
+}
+
+export interface CheckMuteUser {
+  mute_users: number[];
 }

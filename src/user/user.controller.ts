@@ -3,7 +3,7 @@ import { Body, Controller, Post, Put, Res } from "@nestjs/common";
 import { Response } from "express";
 
 import { UserService } from "./user.service";
-import { City, ColorTheme, Confidentiality, DataType, Theme, UserCity, UserId, UserList } from "./interface";
+import { CheckMuteUser, City, ColorTheme, Confidentiality, DataType, MuteUser, Theme, UserCity, UserId, UserList } from "./interface";
 
 @Controller()
 export class UserController {
@@ -64,6 +64,16 @@ export class UserController {
     try {
       const user: void | {userData: ColorTheme} = await this.userService.changeColorTheme(data);
       res.status(200).json(user);
+    } catch (e) {
+      return console.log(e);
+    }
+  }
+
+  @Put('/mute_user')
+  async muteUser(@Body() data: MuteUser, @Res() res: Response): Promise<void> {
+    try {
+      const mute: void | CheckMuteUser = await this.userService.muteUser(data);
+      res.status(200).json(mute);
     } catch (e) {
       return console.log(e);
     }
