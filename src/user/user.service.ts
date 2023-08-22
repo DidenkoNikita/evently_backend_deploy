@@ -3,7 +3,7 @@ import { Injectable } from "@nestjs/common";
 import { Mood } from "./userMood/interface";
 import { PrismaService } from "src/prisma.service";
 import { Categories } from "./userCategories/interface";
-import { City, ColorTheme, Confidentiality, DataType, Theme, UserCity, UserId, UserList, UserSearch } from "./interface";
+import { CheckMuteUser, City, ColorTheme, Confidentiality, DataType, MuteUser, Theme, UserCity, UserId, UserList, UserSearch } from "./interface";
 
 @Injectable()
 export class UserService {
@@ -24,9 +24,10 @@ export class UserService {
           phone: true,
           gender: true,
           friends_id: true,
+          mute_users: true,
           link_avatar: true,
           color_theme: true,
-          date_of_birth: true
+          date_of_birth: true,
         }
       })
 
@@ -359,6 +360,56 @@ export class UserService {
           }
         })
         return confidentiality;
+      }
+    } catch (e) {
+      return console.log(e);
+    }
+  }
+
+  async muteUser (data: MuteUser): Promise<void | CheckMuteUser> {
+    try {
+      const checkMuteUser: CheckMuteUser = await this.prisma.user.findUnique({
+        where: {
+          id: data.user_id
+        },
+        select: {
+          mute_users: true
+        }
+      })
+
+      const check = checkMuteUser.mute_users.find((id) => id === data.id);
+
+      if (!check) {
+        const updatedMute: number[] = [...checkMuteUser.mute_users, data.id];
+
+        const mute: CheckMuteUser = await this.prisma.user.update({
+          where: {
+            id: data.user_id
+          },
+          data: {
+            mute_users: updatedMute
+          },
+          select: {
+            mute_users: true
+          }
+        })
+
+        return mute;
+      } else {
+        const updatedMute: number[] = checkMuteUser.mute_users.filter((id) => id !== data.id);
+        const mute: CheckMuteUser = await this.prisma.user.update({
+          where: {
+            id: data.user_id
+          },
+          data: {
+            mute_users: updatedMute
+          },
+          select: {
+            mute_users: true
+          }
+        })
+
+        return mute;
       }
     } catch (e) {
       return console.log(e);

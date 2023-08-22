@@ -21,6 +21,7 @@ model user {
   link_avatar   String?
   friends_id    Int[]
   color_theme   Boolean? @default(false)
+  mute_users    Int[]
 }
 
 model user_categories {

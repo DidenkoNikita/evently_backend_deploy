@@ -18,4 +18,4 @@ export interface User {
 export interface Data {
   id: number;
   accessToken: string;
-} 
+}
